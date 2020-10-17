@@ -1,0 +1,7 @@
+.dragable-item {
+    transition: all .08s linear;
+}
+.drag-start {
+    transform: translate(0px,2px);
+    z-index: 3;
+}
