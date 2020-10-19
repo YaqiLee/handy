@@ -1,40 +1,46 @@
 import {
-  IonInput,
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
+  IonButton,
   IonContent,
+  IonHeader,
+  IonInput,
   IonItem,
   IonLabel,
   IonList,
-  IonButton,
+  IonPage,
+  IonTitle,
+  IonToolbar,
 } from "@ionic/react";
 import React from "react";
+import { withRouter } from "react-router";
 import { saveGoods } from "../services/buys.service";
 import "./GoodsCreate.css";
 
-class GoodsCreate extends React.Component {
+class GoodsCreate extends React.Component<any> {
   state = {
     name: "",
     price: "",
+    order: 0,
   };
 
   constructor(props: any) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+    console.log(this.props);
   }
 
   handleSubmit() {
-    console.log(this.state);
-    saveGoods(this.state).then(res => {
-        console.log(res);
-        
-    })
+    saveGoods(this.state).then((res) => {
+      this.props.history.push("/tab1");
+    });
   }
 
   handleChange(event: any, k: string) {
     this.setState({ [k]: event.target.value });
+  }
+
+  componentDidMount() {
+      console.log('component mount');
+      
   }
 
   render() {
@@ -76,4 +82,4 @@ class GoodsCreate extends React.Component {
   }
 }
 
-export default GoodsCreate;
+export default withRouter(GoodsCreate);

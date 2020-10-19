@@ -9,3 +9,11 @@ export const Get = (url: string, params?: any) => {
 export const Post = (url: string, data?: any) => {
   return axios.post(url, data).then((res) => res.data);
 };
+
+export const Put = (url: string, data?: any) => {
+    return axios.put(url, data);
+}
+
+export const Delete = (url: string) => {
+    return axios.delete(url);
+}
