@@ -21,6 +21,7 @@ const BuyList: React.FC<any> = () => {
   
   let [data, setData] = useState<any>([]);
   let [press, setPress] = useState<any>();
+//   let [distance, setDistance] = useState<any>(0);
 
   let onTouchStart = (e: TouchEvent, index: number) => {
 
