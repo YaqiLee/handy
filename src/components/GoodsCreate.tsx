@@ -30,17 +30,12 @@ class GoodsCreate extends React.Component<any> {
 
   handleSubmit() {
     saveGoods(this.state).then((res) => {
-      this.props.history.push("/tab1");
+      this.props.history.push('/tab1/3')
     });
   }
 
   handleChange(event: any, k: string) {
     this.setState({ [k]: event.target.value });
-  }
-
-  componentDidMount() {
-      console.log('component mount');
-      
   }
 
   render() {

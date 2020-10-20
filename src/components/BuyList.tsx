@@ -1,20 +1,19 @@
 import {
-  IonItem,
-  IonLabel,
-  IonList,
-  IonNote,
-  IonItemSliding,
-  IonItemOptions,
-  IonItemOption,
+    IonItem,
+    IonItemOption, IonItemOptions, IonItemSliding, IonLabel,
+    IonList,
+    IonNote,
+    useIonRouter
 } from "@ionic/react";
-import ExploreContainer from "./EmptyPage";
 import React, { useEffect, useState } from "react";
-import "./BuyList.css";
+import { withRouter } from "react-router";
 import {
-  deleteGoodsById,
-  getGoods,
-  updateGoodsOrder,
+    deleteGoodsById,
+    getGoods,
+    updateGoodsOrder
 } from "../services/buys.service";
+import "./BuyList.css";
+import ExploreContainer from "./EmptyPage";
 
 type TouchEvent = React.TouchEvent<HTMLIonItemElement>;
 
@@ -37,8 +36,9 @@ const BuyList: React.FC<any> = (props: any) => {
   };
 
   let onTouchEnd = (e: TouchEvent) => {
+    clearTimeout(press);
 
-    if(dragIndex === -1) {
+    if (dragIndex === -1) {
       return false;
     }
 
@@ -54,10 +54,8 @@ const BuyList: React.FC<any> = (props: any) => {
     let downMoveRows = dragIndex + rows;
     if (rows < 0 && downMoveRows >= 0) {
       updateData(swap(list, dragIndex, downMoveRows));
-
     }
 
-    clearTimeout(press);
     // 重置选中
     setDragIndex(-1);
   };
@@ -76,7 +74,7 @@ const BuyList: React.FC<any> = (props: any) => {
 
   let onDelete = (it: any) => {
     console.log(it);
-    
+
     deleteGoodsById(it.id).then((res) => {
       setData(data.filter((res: any) => res.id !== it.id));
     });
@@ -96,10 +94,13 @@ const BuyList: React.FC<any> = (props: any) => {
       to: origin[toIndex],
     };
   };
+
+  let history = useIonRouter();
+
   // 第二个参数： 根据第二个参数是否变化，调用useEffect
   useEffect(() => {
     getGoods().then((res) => setData(res));
-  }, []);
+  }, [history.routeInfo.id]);
 
   let renderList = () => {
     return (
@@ -143,4 +144,4 @@ const BuyList: React.FC<any> = (props: any) => {
   return data.length > 0 ? renderList() : renderEmpty();
 };
 
-export default BuyList;
+export default withRouter(BuyList);
