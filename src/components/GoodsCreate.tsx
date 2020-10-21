@@ -29,7 +29,7 @@ class GoodsCreate extends React.Component<any> {
   }
 
   handleSubmit() {
-    saveGoods(this.state).then((res) => {
+    saveGoods(this.state).then((res: any) => {
       this.props.history.push('/tab1/3')
     });
   }

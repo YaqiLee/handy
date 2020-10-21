@@ -18,6 +18,7 @@ import { withRouter } from "react-router";
 import {
   deleteGoodsById,
   getGoods,
+  goodsCount,
   updateGoods,
 } from "../services/buys.service";
 import BuyDetail from "./BuyDetail";
@@ -35,19 +36,17 @@ const BuyList: React.FC<any> = (props: any) => {
   let [showToast1, setShowToast1] = useState(false);
   // toast文本
   let [toastText, setToastText] = useState("");
-  // 用于重新调用count
-  let [timestamp, setTimestamp] = useState(0);
+  let [summary, setSummary] = useState({ buy: {}, bought: {} });
 
   // 拖动更新顺序
   let updateData = ({ from, to }: any) => {
-    updateGoods(from).then((res) => {});
-    updateGoods(to).then((res) => {});
+    updateGoods(from);
+    updateGoods(to);
   };
   // 删除
   let onDelete = (it: any) => {
     deleteGoodsById(it.id).then((res) => {
       setData(data.filter((res: any) => res.id !== it.id));
-      setTimestamp(Date.now())
     });
   };
   // 切换显示统计页面
@@ -71,14 +70,12 @@ const BuyList: React.FC<any> = (props: any) => {
   };
 
   let onBuy = ({ id }: any) => {
-    updateGoods({ id, bought: 1 }).then(({ data }) => {
+    updateGoods({ id, bought: 1 }).then(({ data }: any) => {
       if (data.affected === 0) {
         setToastText("未更新成功");
       } else {
-        setToastText("已更新");
+        setToastText("已加入已购");
         getGoodsFunc();
-        // 更新stamp，重新调用count
-        setTimestamp(Date.now());
       }
       setShowToast1(true);
     });
@@ -87,6 +84,15 @@ const BuyList: React.FC<any> = (props: any) => {
   let getGoodsFunc = (bought = 0) => {
     getGoods(bought).then((res: any) => setData(res));
   };
+  let getGoodsCount = () => {
+    goodsCount().then((data: any) => setSummary(data));
+  };
+
+  let onShowDetail = () => {
+    getGoodsCount();
+    toggleModal(true);
+  };
+
   // 第一次更新获取商品数据
   let history = useIonRouter();
 
@@ -171,19 +177,11 @@ const BuyList: React.FC<any> = (props: any) => {
           </IonChip>
         )}
 
-        <IonChip
-          outline={true}
-          color="primary"
-          onClick={() => toggleModal(true)}
-        >
+        <IonChip outline={true} color="primary" onClick={() => onShowDetail()}>
           <IonLabel>数据统计</IonLabel>
         </IonChip>
       </IonListHeader>
-      <BuyDetail
-        isVisible={isVisible}
-        toggle={toggleModal}
-        timestamp={timestamp}
-      />
+      <BuyDetail isVisible={isVisible} toggle={toggleModal} summary={summary} />
       <IonToast
         isOpen={showToast1}
         color="primary"
