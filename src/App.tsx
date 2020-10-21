@@ -1,14 +1,11 @@
 import {
-  IonApp,
-  IonFab,
-  IonFabButton,
-  IonFabList,
-  IonIcon,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
+    IonApp,
+    IonIcon,
+    IonLabel,
+    IonRouterOutlet,
+    IonTabBar,
+    IonTabButton,
+    IonTabs
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 /* Core CSS required for Ionic components to work properly */
@@ -24,10 +21,10 @@ import "@ionic/react/css/structure.css";
 import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/typography.css";
-import { addOutline, card, fileTray } from "ionicons/icons";
+import { card, fileTray } from "ionicons/icons";
 import React from "react";
-import { Link, Redirect, Route } from "react-router-dom";
-import GoodsCreate from "./components/GoodsCreate";
+import { Redirect, Route } from "react-router-dom";
+import GoodsCreate from "./pages/GoodsCreate";
 import Tab1 from "./pages/Tab1";
 import Tab2 from "./pages/Tab2";
 /* Theme variables */
@@ -55,27 +52,6 @@ const App: React.FC = () => (
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
-      <IonFab
-        vertical="bottom"
-        horizontal="end"
-        style={{ marginBottom: "44px" }}
-      >
-        <IonFabButton>
-          <IonIcon icon={addOutline} />
-        </IonFabButton>
-        <IonFabList side="top">
-          <IonFabButton>
-            <Link to="/goods/create">
-              <IonIcon icon={card} />
-            </Link>
-          </IonFabButton>
-          <IonFabButton>
-            <Link to="/tab2">
-              <IonIcon icon={fileTray} />
-            </Link>
-          </IonFabButton>
-        </IonFabList>
-      </IonFab>
     </IonReactRouter>
   </IonApp>
 );

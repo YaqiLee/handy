@@ -10,6 +10,7 @@ import {
   IonNote,
   IonReorder,
   IonReorderGroup,
+  IonRouterLink,
   IonToast,
   useIonRouter,
 } from "@ionic/react";
@@ -23,10 +24,9 @@ import {
 } from "../services/buys.service";
 import BuyDetail from "./BuyDetail";
 import "./BuyList.css";
-import ExploreContainer from "./EmptyPage";
+import ExploreContainer from "../components/EmptyPage";
 
 const BuyList: React.FC<any> = (props: any) => {
-  let [dragIndex] = useState(-1);
   // let [touchStartTime, setTouchStartTime] = useState(0);
   let [isSort, setSort] = useState(true);
   let [data, setData] = useState<any>([]);
@@ -127,13 +127,7 @@ const BuyList: React.FC<any> = (props: any) => {
               it && (
                 <IonReorder key={i}>
                   <IonItemSliding>
-                    <IonItem
-                      className={
-                        dragIndex === i
-                          ? "dragable-item drag-start"
-                          : "dragable-item"
-                      }
-                    >
+                    <IonItem routerLink="/tab2">
                       <IonLabel>{it.name}</IonLabel>
                       <IonNote color={color(it.price)} slot="end">
                         {it.price}元
@@ -177,6 +171,16 @@ const BuyList: React.FC<any> = (props: any) => {
           </IonChip>
         )}
 
+        <IonChip outline={true} color="primary">
+          <IonLabel>
+            <IonRouterLink routerLink="/tab2">已购商品</IonRouterLink>
+          </IonLabel>
+        </IonChip>
+        <IonChip outline={true} color="primary">
+          <IonLabel>
+            <IonRouterLink routerLink="/goods/create">新增预购</IonRouterLink>
+          </IonLabel>
+        </IonChip>
         <IonChip outline={true} color="primary" onClick={() => onShowDetail()}>
           <IonLabel>数据统计</IonLabel>
         </IonChip>
