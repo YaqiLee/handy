@@ -11,49 +11,55 @@ import {
   IonReorder,
   IonReorderGroup,
   IonRouterLink,
-  IonToast,
-  useIonRouter,
+  IonToast
 } from "@ionic/react";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { connect } from "react-redux";
 import { withRouter } from "react-router";
+import ExploreContainer from "../components/EmptyPage";
+import { GOODS_SUCCESS } from "../redux/action";
 import {
   batchUpdateGoods,
   deleteGoodsById,
   getGoods,
   goodsCount,
-  updateGoods,
+  updateGoods
 } from "../services/buys.service";
 import BuyDetail from "./BuyDetail";
 import "./BuyList.css";
-import ExploreContainer from "../components/EmptyPage";
 
-const BuyList: React.FC<any> = (props: any) => {
-  // let [touchStartTime, setTouchStartTime] = useState(0);
-  let [isSort, setSort] = useState(true);
-  let [data, setData] = useState<any>([]);
-  // 显示统计页面
-  let [isVisible, setIsVisible] = useState<boolean>(false);
-  // 是否显示toast
-  let [showToast1, setShowToast1] = useState(false);
-  // toast文本
-  let [toastText, setToastText] = useState("");
-  let [summary, setSummary] = useState({ buy: {}, bought: {} });
+class BuyList extends React.Component<any> {
+  state: any = {};
+  constructor(props: any) {
+    super(props);
 
-  // 删除
-  let onDelete = (it: any) => {
+    this.state = {
+      isSort: true,
+      data: [],
+      isVisible: false,
+      showToast1: false,
+      toastText: "",
+      summary: { buy: {}, bought: {} },
+    };
+  }
+
+  onDelete(it: any) {
     deleteGoodsById(it.id).then((res) => {
-      setData(data.filter((res: any) => res.id !== it.id));
+      this.setState({
+        data: this.state.data.filter((res: any) => res.id !== it.id),
+      });
     });
-  };
+  }
+
   // 切换显示统计页面
-  let toggleModal = (visible: boolean) => {
-    setIsVisible(visible);
-  };
-  let onSort = (sort = !isSort) => {
-    setSort(sort);
-  };
-  // 交换数据
-  let swap = (origin: any, fromIndex: number, toIndex: number) => {
+  toggleModal(visible: boolean) {
+    this.setState({ isVisible: visible });
+  }
+  onSort(sort = !this.state.isSort) {
+    this.setState({ isSort: sort });
+  }
+
+  swap(origin: any, fromIndex: number, toIndex: number) {
     let list: any[] = [...origin],
       arr = [];
     for (let i = fromIndex; i < toIndex; i++) {
@@ -71,65 +77,67 @@ const BuyList: React.FC<any> = (props: any) => {
     }
 
     return arr;
-  };
+  }
 
-  let onBuy = ({ id }: any) => {
+  onBuy({ id }: any) {
     updateGoods({ id, bought: 1 }).then(({ data }: any) => {
       if (data.affected === 0) {
-        setToastText("未更新成功");
+        this.setState({ toastText: "未更新成功" });
       } else {
-        setToastText("已加入已购");
-        getGoodsFunc();
+        this.setState({ toastText: "已加入已购" });
+        this.getGoodsFunc();
       }
-      setShowToast1(true);
+      this.setState({ showToast1: true });
     });
-  };
+  }
 
-  let getGoodsFunc = (bought = 0) => {
-    getGoods(bought).then((res: any) => setData(res));
-  };
-  let getGoodsCount = () => {
-    goodsCount().then((data: any) => setSummary(data));
-  };
+  getGoodsFunc(bought = 0) {
+    getGoods(bought).then((res: any) => this.setState({ data: res }));
+  }
 
-  let onShowDetail = () => {
-    getGoodsCount();
-    toggleModal(true);
-  };
+  getGoodsCount() {
+    goodsCount().then((summary: any) => this.setState({ summary }));
+  }
 
-  // 第一次更新获取商品数据
-  let history = useIonRouter();
+  onShowDetail() {
+    this.getGoodsCount();
+    this.toggleModal(true);
+  }
 
-  // 第二个参数： 根据第二个参数是否变化，调用useEffect
-  useEffect(() => {
-    getGoodsFunc();
-  }, [history.routeInfo.id]);
+  componentDidMount() {
+    this.getGoodsFunc();
+  }
 
-  let doReorder = (event: CustomEvent<ItemReorderEventDetail>) => {
-    batchUpdateGoods(swap(data, event.detail.from, event.detail.to));
+  doReorder(event: CustomEvent<ItemReorderEventDetail>) {
+    batchUpdateGoods(
+      this.swap(this.state.data, event.detail.from, event.detail.to)
+    );
     event.detail.complete();
-    setSort(true);
-  };
+    this.setState({ isSort: true });
+  }
 
-  let color = (money: number): string => {
+  color(money: number): string {
     if (money > 0 && money < 100) return "primary";
     else if (money >= 100 && money < 500) return "warning";
     else if (money >= 500) return "danger";
     return "dark";
-  };
+  }
 
-  let renderList = () => {
+  renderList() {
     return (
       <>
-        <IonReorderGroup disabled={isSort} onIonItemReorder={doReorder}>
-          {data.map(
+        <IonReorderGroup
+          disabled={this.state.isSort}
+          onIonItemReorder={(e) => this.doReorder(e)}
+        >
+          {this.state.data.map(
             (it: any, i: any) =>
               it && (
                 <IonReorder key={i}>
                   <IonItemSliding>
                     <IonItem routerLink="/tab2">
                       <IonLabel>{it.name}</IonLabel>
-                      <IonNote color={color(it.price)} slot="end">
+                      <IonNote color={this.color(it.price)} slot="end">
                         {it.price}元
                       </IonNote>
                     </IonItem>
@@ -137,11 +145,14 @@ const BuyList: React.FC<any> = (props: any) => {
                     <IonItemOptions side="end">
                       <IonItemOption
                         color="danger"
-                        onClick={() => onDelete(it)}
+                        onClick={() => this.onDelete(it)}
                       >
                         删除
                       </IonItemOption>
-                      <IonItemOption color="success" onClick={() => onBuy(it)}>
+                      <IonItemOption
+                        color="success"
+                        onClick={() => this.onBuy(it)}
+                      >
                         已购
                       </IonItemOption>
                     </IonItemOptions>
@@ -152,47 +163,69 @@ const BuyList: React.FC<any> = (props: any) => {
         </IonReorderGroup>
       </>
     );
-  };
+  }
 
-  let renderEmpty = () => {
+  renderEmpty() {
     return <ExploreContainer></ExploreContainer>;
-  };
+  }
 
-  return (
-    <>
-      <IonListHeader>
-        {data.length > 0 && (
-          <IonChip outline={true} color="tertiary" onClick={() => onSort()}>
-            <IonLabel>{isSort ? "调整顺序" : "排序结束"}</IonLabel>
+  render() {
+    return (
+      <>
+        <IonListHeader>
+          {this.props.buys.length > 0 && (
+            <IonChip outline={true} color="tertiary" onClick={() => this.onSort()}>
+              <IonLabel>{this.state.isSort ? "调整顺序" : "排序结束"}</IonLabel>
+            </IonChip>
+          )}
+          <IonChip outline={true} color="primary">
+            <IonLabel>
+              <IonRouterLink routerLink="/tab2">已购商品</IonRouterLink>
+            </IonLabel>
           </IonChip>
-        )}
-        <IonChip outline={true} color="primary">
-          <IonLabel>
-            <IonRouterLink routerLink="/tab2">已购商品</IonRouterLink>
-          </IonLabel>
-        </IonChip>
-        <IonChip outline={true} color="primary">
-          <IonLabel>
-            <IonRouterLink routerLink="/goods/create">新增预购</IonRouterLink>
-          </IonLabel>
-        </IonChip>
-        <IonChip outline={true} color="primary" onClick={() => onShowDetail()}>
-          <IonLabel>数据统计</IonLabel>
-        </IonChip>
-      </IonListHeader>
+          <IonChip outline={true} color="primary">
+            <IonLabel>
+              <IonRouterLink routerLink="/goods/create">新增预购</IonRouterLink>
+            </IonLabel>
+          </IonChip>
+          <IonChip
+            outline={true}
+            color="primary"
+            onClick={() => this.onShowDetail()}
+          >
+            <IonLabel>数据统计</IonLabel>
+          </IonChip>
+        </IonListHeader>
 
-      <BuyDetail isVisible={isVisible} toggle={toggleModal} summary={summary} />
+        <BuyDetail
+          isVisible={this.state.isVisible}
+          toggle={(visible: boolean) => this.toggleModal(visible)}
+          summary={this.state.summary}
+        />
 
-      <IonToast
-        isOpen={showToast1}
-        color="primary"
-        onDidDismiss={() => setShowToast1(false)}
-        message={toastText}
-        duration={200}
-      />
-      {data.length > 0 ? renderList() : renderEmpty()}
-    </>
-  );
+        <IonToast
+          isOpen={this.state.showToast1}
+          color="primary"
+          onDidDismiss={() => this.setState({ showToast1: false })}
+          message={this.state.toastText}
+          duration={200}
+        />
+        {this.state.data.length > 0 ? this.renderList() : this.renderEmpty()}
+      </>
+    );
+  }
+}
+const mapStateToProps = (state: any) => {
+  return {
+    buys: state.buys
+  }
+}
+
+const _updateGoods = (data: any) => ({ type: GOODS_SUCCESS, data });
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    updateGoods: (data: any) => dispatch(_updateGoods(data)),
+  };
 };
 
-export default withRouter(BuyList);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(BuyList));

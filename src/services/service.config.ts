@@ -1,20 +1,25 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "http://101.200.167.196:4400/api/";
-axios.defaults.timeout = 20000;
+// axios.defaults.baseURL = "http://101.200.167.196:4400/api/";
+
+const instance = axios.create({
+  baseURL: "http://localhost:8080/",
+  timeout: 2000,
+  withCredentials: true,
+});
 
 export const Get = (url: string, params?: any) => {
-  return axios.get(url, { params }).then((res) => res.data);
+  return instance.get(url, { params }).then((res) => res.data);
 };
 
 export const Post = (url: string, data?: any) => {
-  return axios.post(url, data).then((res) => res.data);
+  return instance.post(url, data).then((res) => res.data);
 };
 
 export const Put = (url: string, data?: any) => {
-  return axios.put(url, data);
+  return instance.put(url, data);
 };
 
 export const Delete = (url: string) => {
-  return axios.delete(url);
+  return instance.delete(url);
 };

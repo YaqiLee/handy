@@ -11,7 +11,9 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React from "react";
+import { connect } from "react-redux";
 import { withRouter } from "react-router";
+import { GOODS_UPDATE } from "../redux/action";
 import { saveGoods } from "../services/buys.service";
 import "./GoodsCreate.css";
 
@@ -25,12 +27,12 @@ class GoodsCreate extends React.Component<any> {
   constructor(props: any) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-    console.log(this.props);
   }
 
   handleSubmit() {
     saveGoods(this.state).then((res: any) => {
-      this.props.history.push('/tab1/3')
+      this.props.updateGoods({ bought: 0 });
+      this.props.history.push("/tab1/3");
     });
   }
 
@@ -77,4 +79,11 @@ class GoodsCreate extends React.Component<any> {
   }
 }
 
-export default withRouter(GoodsCreate);
+const _updateGoods = (params: any) => ({ type: GOODS_UPDATE, params });
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    updateGoods: (params: any) => dispatch(_updateGoods(params)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(withRouter(GoodsCreate));
