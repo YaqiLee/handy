@@ -3,7 +3,7 @@ import axios from "axios";
 // axios.defaults.baseURL = "http://101.200.167.196:4400/api/";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: "http://101.200.167.196:4400/api/",
   timeout: 2000,
   withCredentials: true,
 });
