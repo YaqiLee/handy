@@ -13,14 +13,14 @@ import "@ionic/react/css/structure.css";
 import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/typography.css";
-import React, { useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import AppHome from "./pages";
 import Login from "./pages/Login";
-import { loginStatus } from "./services/user.service";
 /* Theme variables */
 import "./theme/variables.css";
+
 const App: React.FC<any> = (props) => {
 
   return (

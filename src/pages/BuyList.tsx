@@ -11,7 +11,7 @@ import {
   IonReorder,
   IonReorderGroup,
   IonRouterLink,
-  IonToast
+  IonToast,
 } from "@ionic/react";
 import React from "react";
 import { connect } from "react-redux";
@@ -23,7 +23,7 @@ import {
   deleteGoodsById,
   getGoods,
   goodsCount,
-  updateGoods
+  updateGoods,
 } from "../services/buys.service";
 import BuyDetail from "./BuyDetail";
 import "./BuyList.css";
@@ -45,9 +45,8 @@ class BuyList extends React.Component<any> {
 
   onDelete(it: any) {
     deleteGoodsById(it.id).then((res) => {
-      this.setState({
-        data: this.state.data.filter((res: any) => res.id !== it.id),
-      });
+      let goods = this.props.buys.filter((res: any) => res.id !== it.id);
+      this.props.updateGoods(goods);
     });
   }
 
@@ -92,7 +91,7 @@ class BuyList extends React.Component<any> {
   }
 
   getGoodsFunc(bought = 0) {
-    getGoods(bought).then((res: any) => this.setState({ data: res }));
+    getGoods(bought).then((res: any) => this.props.updateGoods(res));
   }
 
   getGoodsCount() {
@@ -110,7 +109,7 @@ class BuyList extends React.Component<any> {
 
   doReorder(event: CustomEvent<ItemReorderEventDetail>) {
     batchUpdateGoods(
-      this.swap(this.state.data, event.detail.from, event.detail.to)
+      this.swap(this.props.buys, event.detail.from, event.detail.to)
     );
     event.detail.complete();
     this.setState({ isSort: true });
@@ -123,6 +122,10 @@ class BuyList extends React.Component<any> {
     return "dark";
   }
 
+  get hasData() {
+    return this.props.buys.length > 0;
+  }
+
   renderList() {
     return (
       <>
@@ -130,7 +133,7 @@ class BuyList extends React.Component<any> {
           disabled={this.state.isSort}
           onIonItemReorder={(e) => this.doReorder(e)}
         >
-          {this.state.data.map(
+          {this.props.buys.map(
             (it: any, i: any) =>
               it && (
                 <IonReorder key={i}>
@@ -173,8 +176,12 @@ class BuyList extends React.Component<any> {
     return (
       <>
         <IonListHeader>
-          {this.props.buys.length > 0 && (
-            <IonChip outline={true} color="tertiary" onClick={() => this.onSort()}>
+          {this.hasData && (
+            <IonChip
+              outline={true}
+              color="tertiary"
+              onClick={() => this.onSort()}
+            >
               <IonLabel>{this.state.isSort ? "调整顺序" : "排序结束"}</IonLabel>
             </IonChip>
           )}
@@ -210,16 +217,16 @@ class BuyList extends React.Component<any> {
           message={this.state.toastText}
           duration={200}
         />
-        {this.state.data.length > 0 ? this.renderList() : this.renderEmpty()}
+        {this.hasData ? this.renderList() : this.renderEmpty()}
       </>
     );
   }
 }
 const mapStateToProps = (state: any) => {
   return {
-    buys: state.buys
-  }
-}
+    buys: state.buys,
+  };
+};
 
 const _updateGoods = (data: any) => ({ type: GOODS_SUCCESS, data });
 const mapDispatchToProps = (dispatch: any) => {
@@ -228,4 +235,7 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(BuyList));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(BuyList));

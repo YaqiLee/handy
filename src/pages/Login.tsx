@@ -5,11 +5,11 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  IonList
+  IonList,
 } from "@ionic/react";
 import React from "react";
 import { connect } from "react-redux";
-import { withRouter } from "react-router";
+import { Redirect, withRouter } from "react-router";
 import { LOGIN } from "../redux/action";
 import "./Login.css";
 class Login extends React.Component<any> {
@@ -20,7 +20,6 @@ class Login extends React.Component<any> {
   // 登录
   login() {
     this.props.login(this.state);
-    this.props.history.push('/tab1/1')
   }
 
   handleChange(e: any, key: string) {
@@ -28,7 +27,9 @@ class Login extends React.Component<any> {
   }
 
   render() {
-    return (
+    return this.props.user.id ? (
+      <Redirect to="/tab1/1" />
+    ) : (
       <IonContent>
         <IonAvatar>
           <img
