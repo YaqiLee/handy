@@ -31,7 +31,7 @@ const mapDispatchToProps = (dispatch: any) => {
 
 class AppHome extends React.Component<any> {
   componentDidMount() {
-    // this.props.loginState();
+    this.props.loginState();
   }
 
   render() {
