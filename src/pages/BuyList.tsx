@@ -17,6 +17,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router";
 import {
+  batchUpdateGoods,
   deleteGoodsById,
   getGoods,
   goodsCount,
@@ -38,11 +39,6 @@ const BuyList: React.FC<any> = (props: any) => {
   let [toastText, setToastText] = useState("");
   let [summary, setSummary] = useState({ buy: {}, bought: {} });
 
-  // 拖动更新顺序
-  let updateData = ({ from, to }: any) => {
-    updateGoods(from);
-    updateGoods(to);
-  };
   // 删除
   let onDelete = (it: any) => {
     deleteGoodsById(it.id).then((res) => {
@@ -53,20 +49,28 @@ const BuyList: React.FC<any> = (props: any) => {
   let toggleModal = (visible: boolean) => {
     setIsVisible(visible);
   };
+  let onSort = (sort = !isSort) => {
+    setSort(sort);
+  };
   // 交换数据
   let swap = (origin: any, fromIndex: number, toIndex: number) => {
-    let from = origin[fromIndex];
-    let { order } = origin[toIndex];
+    let list: any[] = [...origin],
+      arr = [];
+    for (let i = fromIndex; i < toIndex; i++) {
+      let temp = list[i];
+      list[i + 1].order = list[i + 1].order - 1;
+      list[i] = list[i + 1];
+      list[i + 1] = temp;
 
-    origin[fromIndex] = origin[toIndex];
-    origin[fromIndex].order = from.order;
-    origin[toIndex] = from;
-    origin[toIndex].order = order;
+      arr.push(list[i]);
 
-    return {
-      from: origin[fromIndex],
-      to: origin[toIndex],
-    };
+      if (i === toIndex - 1) {
+        list[i + 1].order = list[i].order + 1;
+        arr.push(list[i + 1]);
+      }
+    }
+
+    return arr;
   };
 
   let onBuy = ({ id }: any) => {
@@ -102,13 +106,9 @@ const BuyList: React.FC<any> = (props: any) => {
   }, [history.routeInfo.id]);
 
   let doReorder = (event: CustomEvent<ItemReorderEventDetail>) => {
-    // The `from` and `to` properties contain the index of the item
-    // when the drag started and ended, respectively
-    updateData(swap(data, event.detail.from, event.detail.to));
-    // Finish the reorder and position the item in the DOM based on
-    // where the gesture ended. This method can also be called directly
-    // by the reorder group
+    batchUpdateGoods(swap(data, event.detail.from, event.detail.to));
     event.detail.complete();
+    setSort(true);
   };
 
   let color = (money: number): string => {
@@ -162,15 +162,10 @@ const BuyList: React.FC<any> = (props: any) => {
     <>
       <IonListHeader>
         {data.length > 0 && (
-          <IonChip
-            outline={true}
-            color="tertiary"
-            onClick={() => setSort(!isSort)}
-          >
+          <IonChip outline={true} color="tertiary" onClick={() => onSort()}>
             <IonLabel>{isSort ? "调整顺序" : "排序结束"}</IonLabel>
           </IonChip>
         )}
-
         <IonChip outline={true} color="primary">
           <IonLabel>
             <IonRouterLink routerLink="/tab2">已购商品</IonRouterLink>
@@ -185,7 +180,9 @@ const BuyList: React.FC<any> = (props: any) => {
           <IonLabel>数据统计</IonLabel>
         </IonChip>
       </IonListHeader>
+
       <BuyDetail isVisible={isVisible} toggle={toggleModal} summary={summary} />
+
       <IonToast
         isOpen={showToast1}
         color="primary"

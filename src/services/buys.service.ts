@@ -6,6 +6,9 @@ export const saveGoods = (data: any) => Post("/goods/", data);
 
 export const updateGoods = (data: any) => Put("/goods", data);
 
+export const batchUpdateGoods = (data: any[]) => Put("/goods/batch", data);
+
 export const deleteGoodsById = (id: number) => Delete(`/goods/${id}`);
 
 export const goodsCount = () => Get(`/goods/count`);
+

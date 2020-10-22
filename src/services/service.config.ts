@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:8080/";
+axios.defaults.baseURL = "http://101.200.167.196:4400/api/";
 axios.defaults.timeout = 20000;
 
 export const Get = (url: string, params?: any) => {
