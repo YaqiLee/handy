@@ -1,12 +1,4 @@
-import {
-    IonApp,
-    IonIcon,
-    IonLabel,
-    IonRouterOutlet,
-    IonTabBar,
-    IonTabButton,
-    IonTabs
-} from "@ionic/react";
+import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -21,44 +13,23 @@ import "@ionic/react/css/structure.css";
 import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/typography.css";
-import { card, fileTray } from "ionicons/icons";
 import React from "react";
-import { Redirect, Route } from "react-router-dom";
-import GoodsCreate from "./pages/GoodsCreate";
-import Tab1 from "./pages/Tab1";
-import Tab2 from "./pages/Tab2";
+import { Route, Switch } from "react-router-dom";
+import AppHome from "./pages";
+import Login from "./pages/Login";
 /* Theme variables */
 import "./theme/variables.css";
-
 const App: React.FC = () => (
-    <IonApp>
-      <IonReactRouter>
-        <IonTabs>
-          <IonRouterOutlet>
-            <Route path="/goods/create" component={GoodsCreate} exact={true} />
-            <Route path="/tab1/:id" component={Tab1} exact={true} />
-            <Route path="/tab2" component={Tab2} exact={true} />
-            <Route
-              path="/"
-              render={() => <Redirect to="/tab1/1" />}
-              exact={true}
-            />
-          </IonRouterOutlet>
-
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="tab1" href="/tab1/1">
-              <IonIcon icon={card} />
-              <IonLabel>欲购清单</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="tab2" href="/tab2">
-              <IonIcon icon={fileTray} />
-              <IonLabel>待办事项</IonLabel>
-            </IonTabButton>
-          </IonTabBar>
-        </IonTabs>
-        
-      </IonReactRouter>
-    </IonApp>
+  <IonApp>
+    <IonReactRouter>
+      <IonRouterOutlet>
+        <Switch>
+          <Route path="/login" component={Login} exact/>
+          <Route path="/" component={AppHome}/>
+        </Switch>
+      </IonRouterOutlet>
+    </IonReactRouter>
+  </IonApp>
 );
 
 export default App;
