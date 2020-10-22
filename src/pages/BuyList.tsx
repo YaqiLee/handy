@@ -222,9 +222,9 @@ class BuyList extends React.Component<any> {
     );
   }
 }
-const mapStateToProps = (state: any) => {
+const mapStateToProps = ({ good }: any) => {
   return {
-    buys: state.buys,
+    buys: good.buys,
   };
 };
 

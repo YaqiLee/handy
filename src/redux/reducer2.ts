@@ -9,7 +9,11 @@ var initState = {
 export default function reducer(state = initState, action: any) {
   switch (action.type) {
     case LOGIN_SUCCESS:
-      return Object.assign({}, state, { user: action.user });
+      return {
+        ...state,
+        user: action.user,
+        isLogin: true,
+      };
     case LOGIN_STATE_SUCCESS:
       return {
         ...state,

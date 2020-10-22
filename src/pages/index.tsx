@@ -4,23 +4,22 @@ import {
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
-  IonTabs,
+  IonTabs
 } from "@ionic/react";
 import { card, fileTray } from "ionicons/icons";
 import React from "react";
 import { connect } from "react-redux";
 import { Redirect, Route, withRouter } from "react-router-dom";
 import { LOGIN_STATE } from "../redux/action";
-import { loginStatus } from "../services/user.service";
 import GoodsCreate from "./GoodsCreate";
 import Tab1 from "./Tab1";
 import Tab2 from "./Tab2";
 
 const loginState = () => ({ type: LOGIN_STATE });
-const mapStateToProps = (state: any) => {
+const mapStateToProps = ({ login }: any) => {
   return {
-    isLogin: state.isLogin,
-    user: state.user
+    isLogin: login.isLogin,
+    user: login.user,
   };
 };
 
@@ -31,13 +30,12 @@ const mapDispatchToProps = (dispatch: any) => {
 };
 
 class AppHome extends React.Component<any> {
-
   componentDidMount() {
     // this.props.loginState();
   }
 
   render() {
-    return this.props.user.id ? (
+    return this.props.isLogin ? (
       <>
         <IonTabs>
           <IonRouterOutlet>

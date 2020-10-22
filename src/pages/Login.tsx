@@ -27,7 +27,7 @@ class Login extends React.Component<any> {
   }
 
   render() {
-    return this.props.user.id ? (
+    return this.props.isLogin ? (
       <Redirect to="/tab1/1" />
     ) : (
       <IonContent>
@@ -72,9 +72,10 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = ({ login }: any) => {
   return {
-    user: state.user,
+    user: login.user,
+    isLogin: login.isLogin
   };
 };
 
